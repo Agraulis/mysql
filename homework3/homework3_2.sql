@@ -31,8 +31,8 @@ CREATE TABLE post_media (
 
 -- лайки на посты пользователей
 CREATE TABLE likes_posts (
-  post_id BIGINT UNSIGNED NOT NULL,
-  was_liked BOOL DEFAULT NULL,
+  post_id BIGINT UNSIGNED NOT NULL PRIMARY KEY,
+  was_liked BOOL DEFAULT TRUE,
   was_liked_by BIGINT UNSIGNED NOT NULL,
   CONSTRAINT fk_post_liked FOREIGN KEY (post_id) REFERENCES posts (post_id),
   CONSTRAINT fk_user_liked_post FOREIGN KEY (was_liked_by) REFERENCES users (id)
@@ -40,8 +40,8 @@ CREATE TABLE likes_posts (
 
 --  лайки на медиафайлы
 CREATE TABLE likes_media (
-  media_id BIGINT UNSIGNED NOT NULL,
-  was_liked BOOL DEFAULT NULL,
+  media_id BIGINT UNSIGNED NOT NULL PRIMARY KEY,
+  was_liked BOOL DEFAULT TRUE,
   was_liked_by BIGINT UNSIGNED NOT NULL,
   CONSTRAINT fk_media_liked FOREIGN KEY (media_id) REFERENCES media (id),
   CONSTRAINT fk_user_liked_media FOREIGN KEY (was_liked_by) REFERENCES users (id)
@@ -53,6 +53,9 @@ CREATE TABLE black_list (
   ignored_user BIGINT UNSIGNED NOT NULL,
   PRIMARY KEY (ignoring_user, ignored_user),
   is_ignoring BOOL DEFAULT NULL,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX fx_ignoring_user_id (ignoring_user),
+  INDEX fx_ignored_user_id (ignored_user),
   CONSTRAINT fk_black_list_ignoring FOREIGN KEY (ignoring_user) REFERENCES users (id),
   CONSTRAINT fk_black_list_ignored FOREIGN KEY (ignored_user) REFERENCES users (id)
 );
@@ -60,8 +63,17 @@ CREATE TABLE black_list (
 -- список чатов
 CREATE TABLE chats (
   chat_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  chat_name VARCHAR(145) NOT NULL,
+  INDEX fx_chat_name (chat_name)
+);
+
+-- связь пользователей и чатов
+CREATE TABLE user_chats (
+  chat_id BIGINT UNSIGNED NOT NULL PRIMARY KEY,
   chat_participant BIGINT UNSIGNED NOT NULL, 
-  CONSTRAINT fk_chat_participant FOREIGN KEY (chat_participant) REFERENCES users (id)
+  CONSTRAINT fk_chat_participant FOREIGN KEY (chat_participant) REFERENCES users (id),
+  CONSTRAINT fk_chat_name FOREIGN KEY (chat_id) REFERENCES chats (chat_id),
+  INDEX fx_chat_participant_idx (chat_participant)
 );
 
 -- список сообщений в чатах
@@ -74,8 +86,8 @@ CREATE TABLE chat_messages (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_message_to_chat FOREIGN KEY (to_chat_id) REFERENCES chats (chat_id),
-  CONSTRAINT fk_message_author FOREIGN KEY (from_user_id) REFERENCES users (id)
-  
+  CONSTRAINT fk_message_author FOREIGN KEY (from_user_id) REFERENCES users (id),
+  INDEX from_user_id_idx (from_user_id),
+  INDEX to_chat_id_idx (to_chat_id)
 );
-
 
