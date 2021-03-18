@@ -31,18 +31,22 @@ CREATE TABLE post_media (
 
 -- лайки на посты пользователей
 CREATE TABLE likes_posts (
-  post_id BIGINT UNSIGNED NOT NULL PRIMARY KEY,
+  post_id BIGINT UNSIGNED NOT NULL UNIQUE,
   was_liked BOOL DEFAULT TRUE,
   was_liked_by BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (post_id, was_liked_by),
+  INDEX fx_post_id_idx (post_id),
   CONSTRAINT fk_post_liked FOREIGN KEY (post_id) REFERENCES posts (post_id),
   CONSTRAINT fk_user_liked_post FOREIGN KEY (was_liked_by) REFERENCES users (id)
 );
 
 --  лайки на медиафайлы
 CREATE TABLE likes_media (
-  media_id BIGINT UNSIGNED NOT NULL PRIMARY KEY,
+  media_id BIGINT UNSIGNED NOT NULL UNIQUE,
   was_liked BOOL DEFAULT TRUE,
   was_liked_by BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (media_id, was_liked_by),
+  INDEX fx_media_id_idx (media_id),
   CONSTRAINT fk_media_liked FOREIGN KEY (media_id) REFERENCES media (id),
   CONSTRAINT fk_user_liked_media FOREIGN KEY (was_liked_by) REFERENCES users (id)
 );
@@ -69,11 +73,13 @@ CREATE TABLE chats (
 
 -- связь пользователей и чатов
 CREATE TABLE user_chats (
-  chat_id BIGINT UNSIGNED NOT NULL PRIMARY KEY,
-  chat_participant BIGINT UNSIGNED NOT NULL, 
+  chat_id BIGINT UNSIGNED NOT NULL UNIQUE,
+  chat_participant BIGINT UNSIGNED NOT NULL,
+  PRIMARY KEY (chat_id, chat_participant),
   CONSTRAINT fk_chat_participant FOREIGN KEY (chat_participant) REFERENCES users (id),
   CONSTRAINT fk_chat_name FOREIGN KEY (chat_id) REFERENCES chats (chat_id),
-  INDEX fx_chat_participant_idx (chat_participant)
+  INDEX fx_chat_participant_idx (chat_participant),
+  INDEX fx_chat_id_idx (chat_id)
 );
 
 -- список сообщений в чатах
