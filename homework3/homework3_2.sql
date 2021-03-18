@@ -31,7 +31,7 @@ CREATE TABLE post_media (
 
 -- лайки на посты пользователей
 CREATE TABLE likes_posts (
-  post_id BIGINT UNSIGNED NOT NULL UNIQUE,
+  post_id BIGINT UNSIGNED NOT NULL,
   was_liked BOOL DEFAULT TRUE,
   was_liked_by BIGINT UNSIGNED NOT NULL,
   PRIMARY KEY (post_id, was_liked_by),
@@ -42,7 +42,7 @@ CREATE TABLE likes_posts (
 
 --  лайки на медиафайлы
 CREATE TABLE likes_media (
-  media_id BIGINT UNSIGNED NOT NULL UNIQUE,
+  media_id BIGINT UNSIGNED NOT NULL,
   was_liked BOOL DEFAULT TRUE,
   was_liked_by BIGINT UNSIGNED NOT NULL,
   PRIMARY KEY (media_id, was_liked_by),
@@ -73,7 +73,7 @@ CREATE TABLE chats (
 
 -- связь пользователей и чатов
 CREATE TABLE user_chats (
-  chat_id BIGINT UNSIGNED NOT NULL UNIQUE,
+  chat_id BIGINT UNSIGNED NOT NULL,
   chat_participant BIGINT UNSIGNED NOT NULL,
   PRIMARY KEY (chat_id, chat_participant),
   CONSTRAINT fk_chat_participant FOREIGN KEY (chat_participant) REFERENCES users (id),
