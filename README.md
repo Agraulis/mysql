@@ -1,2 +1,1 @@
-# mysql
-# geekbrains homeworks
+# mysql projects for GeekBrains
